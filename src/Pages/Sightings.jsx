@@ -1,5 +1,5 @@
 import { useState } from "react";
-import './Sightings.css';
+// import './Sightings.css';
  function Sightings() {
   const [species, setSpecies] = useState("");
   const [date, setDate] = useState("");
