@@ -1,0 +1,44 @@
+.adopt-container {
+  padding: 2rem 1rem;
+}
+
+.adopt-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.adopt-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.adopt-filters select {
+  min-width: 150px;
+  font-size: 1rem;
+}
+
+.adopt-card {
+  font-size: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0001;
+  margin-bottom: 1.5rem;
+}
+
+.adopt-card img {
+  border-radius: 8px 8px 0 0;
+  object-fit: cover;
+  height: 200px;
+}
+
+.adopt-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.adopt-card .btn {
+  font-size: 1rem;
+}

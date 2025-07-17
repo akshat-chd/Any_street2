@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "animal": "Dog",
+    "gender": "Male",
+    "age": "2 years",
+    "image": "https://images.pexels.com/photos/160846/french-bulldog-summer-smile-joy-160846.jpeg"
+  },
+  {
+    "id": 2,
+    "animal": "Dog",
+    "gender": "Female",
+    "age": "1 year",
+    "image": "https://images.pexels.com/photos/5138264/pexels-photo-5138264.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+  },
+  {
+    "id": 3,
+    "animal": "Cat",
+    "gender": "Male",
+    "age": "3 years",
+    "image": "https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+  },
+  {
+    "id": 4,
+    "animal": "Cat",
+    "gender": "Female",
+    "age": "2 years",
+    "image": "https://images.pexels.com/photos/127028/pexels-photo-127028.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+  },
+  {
+    "id": 5,
+    "animal": "Rabbit",
+    "gender": "Female",
+    "age": "6 months",
+    "image": "https://images.pexels.com/photos/4588065/pexels-photo-4588065.jpeg"
+  },
+  {
+    "id": 6,
+    "animal": "Bird",
+    "gender": "Male",
+    "age": "1 year",
+    "image": "https://images.pexels.com/photos/33017575/pexels-photo-33017575/free-photo-of-vibrant-blue-and-yellow-macaw-in-tropical-setting.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+  }
+]
