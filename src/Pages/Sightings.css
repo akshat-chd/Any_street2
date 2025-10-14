@@ -1,0 +1,36 @@
+.sightings-form {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 2rem 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.sightings-form label {
+  font-weight: 500;
+  color: #2d3748;
+}
+.sightings-form input,
+.sightings-form textarea {
+  margin-bottom: 1rem;
+}
+.sightings-form .btn-primary {
+  background: #e07a5f;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  padding: 0.5rem 2rem;
+  transition: background 0.2s;
+}
+.sightings-form .btn-primary:hover {
+  background: #d65a31;
+}
+.sightings-form .form-label {
+  margin-bottom: 0.25rem;
+}
+.sightings-form .form-control {
+  border-radius: 8px;
+}
+.sightings-form .text-center {
+  margin-top: 2rem;
+}

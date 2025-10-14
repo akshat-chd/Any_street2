@@ -1,3 +1,5 @@
+import './Resources.css';
+
 export default function Resources() {
   const localItems = [
     {
@@ -66,39 +68,42 @@ export default function Resources() {
   return (
     <main className="container py-5">
       {/* Page Header */}
-      <section className="text-center mb-4">
-        <h1 className="display-5">Resources & Support</h1>
-        <p className="text-muted">
+      <section className="resources-header">
+        <h1>Resources & Support</h1>
+        <p>
           Local clinics & shelters in Chandigarh, plus trusted national links.
         </p>
       </section>
 
       {/* Static Local Directory */}
-      <section className="mb-5">
-        <h2 className="h4 mb-3">Chandigarh Directory</h2>
-        <ul className="list-group">
+      <section className="resources-directory">
+        <h2>Chandigarh Directory</h2>
+        <ul>
           {localItems.map(({ title, details }) => (
-            <li key={title} className="list-group-item">
-              <h5 className="mb-1">{title}</h5>
-              <p className="mb-0">{details}</p>
+            <li key={title}>
+              <h5>{title}</h5>
+              <p>{details}</p>
             </li>
           ))}
         </ul>
       </section>
 
       {/* External Live Links */}
-      <section>
-        <h2 className="h4 text-center mb-4">More Resources</h2>
+      <section className="resources-links">
+        <h2 className="text-center mb-4">More Resources</h2>
         <div className="row g-4">
           {externalItems.map(({ title, description, url }) => (
             <div key={title} className="col-md-6 col-lg-3">
-              <div className="card h-100 shadow-sm">
-                <div className="card-body d-flex flex-column">
-                  <h3 className="h6">{title}</h3>
-                  <p className="flex-grow-1">{description}</p>
+              <div className="card h-100 shadow-sm border-0">
+                <div className="card-body d-flex flex-column align-items-center text-center">
+                  <div className="mb-3" style={{fontSize: '2.2rem'}}>
+                    {title.includes('Petfinder') ? '🔎' : title.includes('ASPCA') ? '🐶' : title.includes('Volunteer') ? '🤝' : '📖'}
+                  </div>
+                  <h3 className="h6 mb-2" style={{color:'#e07a5f'}}>{title}</h3>
+                  <p className="flex-grow-1 mb-3">{description}</p>
                   <a
                     href={url}
-                    className="btn btn-outline-primary mt-auto"
+                    className="btn btn-outline-primary mt-auto px-4 py-2"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

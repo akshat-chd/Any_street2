@@ -1,15 +1,33 @@
+import './Sightings.css';
 import { useState } from "react";
-// import './Sightings.css';
- function Sightings() {
+
+function Sightings() {
   const [species, setSpecies] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [details, setDetails] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Thank you! Your ${species || "animal"} sighting has been submitted.`);
+    // Save sighting to localStorage
+    const newSighting = {
+      id: Date.now(),
+      animal: species,
+      date,
+      location,
+      details,
+      photo: photo ? URL.createObjectURL(photo) : null,
+      gender: '', // unknown
+      name: '', // unknown
+      age: '', // unknown
+      fromSighting: true
+    };
+    const prev = JSON.parse(localStorage.getItem('sightings') || '[]');
+    localStorage.setItem('sightings', JSON.stringify([newSighting, ...prev]));
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
     setSpecies("");
     setDate("");
     setLocation("");
@@ -25,11 +43,13 @@ import { useState } from "react";
           Spotted a stray or lost pet? Fill in the details below so we can help.
         </p>
       </section>
-
-      <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+      <form onSubmit={handleSubmit} className="sightings-form needs-validation" noValidate>
+        {submitted && (
+          <div className="alert alert-success text-center">Thank you! Your sighting has been submitted.</div>
+        )}
         <div className="row g-4">
           <div className="col-md-6">
-            <label className="form-label">Species</label>
+            <label className="form-label">Species <span style={{color:'#e07a5f'}}>*</span></label>
             <input
               type="text"
               className="form-control"
@@ -39,9 +59,8 @@ import { useState } from "react";
               required
             />
           </div>
-
           <div className="col-md-6">
-            <label className="form-label">Date Spotted</label>
+            <label className="form-label">Date Spotted <span style={{color:'#e07a5f'}}>*</span></label>
             <input
               type="date"
               className="form-control"
@@ -50,9 +69,8 @@ import { useState } from "react";
               required
             />
           </div>
-
           <div className="col-12">
-            <label className="form-label">Location</label>
+            <label className="form-label">Location <span style={{color:'#e07a5f'}}>*</span></label>
             <input
               type="text"
               className="form-control"
@@ -62,7 +80,6 @@ import { useState } from "react";
               required
             />
           </div>
-
           <div className="col-12">
             <label className="form-label">Additional Details</label>
             <textarea
@@ -73,7 +90,6 @@ import { useState } from "react";
               onChange={(e) => setDetails(e.target.value)}
             />
           </div>
-
           <div className="col-12">
             <label className="form-label">Upload Photo (optional)</label>
             <input
@@ -82,9 +98,17 @@ import { useState } from "react";
               accept="image/*"
               onChange={(e) => setPhoto(e.target.files[0])}
             />
+            {photo && (
+              <div className="mt-2 text-center">
+                <img
+                  src={URL.createObjectURL(photo)}
+                  alt="Preview"
+                  style={{ maxWidth: '180px', maxHeight: '180px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                />
+              </div>
+            )}
           </div>
         </div>
-
         <div className="text-center mt-4">
           <button type="submit" className="btn btn-primary px-5">
             Submit Sighting
@@ -94,4 +118,5 @@ import { useState } from "react";
     </main>
   );
 }
+
 export default Sightings;

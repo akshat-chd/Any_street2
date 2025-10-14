@@ -8,19 +8,22 @@ export default function AdoptionList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/data/adoptions.json')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch data');
-        return res.json();
-      })
-      .then((data) => {
-        setPets(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    Promise.all([
+      fetch('/data/adoptions.json')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch data');
+          return res.json();
+        })
+        .catch(() => []),
+      Promise.resolve(JSON.parse(localStorage.getItem('sightings') || '[]'))
+    ]).then(([adoptions, sightings]) => {
+      // Merge sightings and adoptions
+      setPets([...sightings, ...adoptions]);
+      setLoading(false);
+    }).catch((err) => {
+      setError(err.message);
+      setLoading(false);
+    });
   }, []);
 
   const filtered = pets.filter((pet) =>
@@ -31,7 +34,6 @@ export default function AdoptionList() {
   const handleFilter = (field) => (e) => {
     setFilters((prev) => ({ ...prev, [field]: e.target.value }));
   };
-
   if (loading) return <p>Loading pets…</p>;
   if (error) return <p className="text-danger">Error: {error}</p>;
 
@@ -61,30 +63,30 @@ export default function AdoptionList() {
         </select>
       </div>
 
-      {/* Pet Cards */}
-      <div className="row">
-        {filtered.length ? (
+      {/* Pet Catalog Grid */}
+      <div className="adopt-catalog">
+        {filtered.length === 0 ? (
+          <p>No pets found.</p>
+        ) : (
           filtered.map((pet) => (
-            <div key={pet.id} className="col-sm-6 col-md-4 mb-4">
-              <div className="adopt-card card h-100">
-                <img
-                  src={pet.image}
-                  className="card-img-top"
-                  alt={pet.animal + ' avatar'}
-                />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{pet.animal}</h5>
-                  <p className="card-text mb-1"><strong>Age:</strong> {pet.age}</p>
-                  <p className="card-text mb-1"><strong>Gender:</strong> {pet.gender}</p>
-                  <button className="btn btn-outline-primary mt-auto">
-                    Interested
-                  </button>
-                </div>
+            <div key={pet.id || pet.name} className="adopt-card">
+              <div className="adopt-img-wrap">
+                {(pet.photo || pet.image) && (
+                  <img src={pet.photo || pet.image} alt={pet.animal || pet.name} className="adopt-img" />
+                )}
+              </div>
+              <div className="adopt-info">
+                <h3 className="card-title">{pet.name || pet.animal || 'Unknown'}</h3>
+                <p><strong>Species:</strong> {pet.animal || 'Unknown'}</p>
+                {pet.location && <p><strong>Location:</strong> {pet.location}</p>}
+                {pet.details && <p><strong>Details:</strong> {pet.details}</p>}
+                {pet.date && <p><strong>Date Spotted:</strong> {pet.date}</p>}
+                {pet.gender && <p><strong>Gender:</strong> {pet.gender}</p>}
+                {pet.age && <p><strong>Age:</strong> {pet.age}</p>}
+                {pet.fromSighting && <span className="badge bg-warning text-dark">Reported Sighting</span>}
               </div>
             </div>
           ))
-        ) : (
-          <p>No animals match your filters.</p>
         )}
       </div>
     </div>
