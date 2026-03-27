@@ -1,44 +1,74 @@
 [
   {
     "id": 1,
+    "name": "Buddy",
     "animal": "Dog",
     "gender": "Male",
     "age": "2 years",
+    "breed": "French Bulldog",
+    "location": "Sector 15, Chandigarh",
+    "details": "Friendly, compact, and comfortable around apartment living with two short walks a day.",
+    "status": "Available",
     "image": "https://images.pexels.com/photos/160846/french-bulldog-summer-smile-joy-160846.jpeg"
   },
   {
     "id": 2,
+    "name": "Hazel",
     "animal": "Dog",
     "gender": "Female",
     "age": "1 year",
+    "breed": "Indie Mix",
+    "location": "Manimajra, Chandigarh",
+    "details": "Energetic young dog who does well with patient introductions and regular play.",
+    "status": "Available",
     "image": "https://images.pexels.com/photos/5138264/pexels-photo-5138264.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
   },
   {
     "id": 3,
+    "name": "Simba",
     "animal": "Cat",
     "gender": "Male",
     "age": "3 years",
+    "breed": "Domestic Shorthair",
+    "location": "Sector 22, Chandigarh",
+    "details": "Independent but affectionate once settled, with a calm indoor routine.",
+    "status": "Available",
     "image": "https://images.pexels.com/photos/1543793/pexels-photo-1543793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
   },
   {
     "id": 4,
+    "name": "Luna",
     "animal": "Cat",
     "gender": "Female",
     "age": "2 years",
+    "breed": "Tabby Mix",
+    "location": "Sector 35, Chandigarh",
+    "details": "Social, playful, and comfortable around quiet households with a predictable routine.",
+    "status": "Available",
     "image": "https://images.pexels.com/photos/127028/pexels-photo-127028.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
   },
   {
     "id": 5,
+    "name": "Clover",
     "animal": "Rabbit",
     "gender": "Female",
     "age": "6 months",
+    "breed": "Mini Lop",
+    "location": "Panchkula",
+    "details": "Young rabbit looking for a quiet indoor setup, soft bedding, and gentle handling.",
+    "status": "Available",
     "image": "https://images.pexels.com/photos/4588065/pexels-photo-4588065.jpeg"
   },
   {
     "id": 6,
+    "name": "Rio",
     "animal": "Bird",
     "gender": "Male",
     "age": "1 year",
+    "breed": "Macaw",
+    "location": "Mohali",
+    "details": "Bright and vocal bird suited to adopters ready for enrichment, training, and daily engagement.",
+    "status": "Available",
     "image": "https://images.pexels.com/photos/33017575/pexels-photo-33017575/free-photo-of-vibrant-blue-and-yellow-macaw-in-tropical-setting.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
   }
 ]

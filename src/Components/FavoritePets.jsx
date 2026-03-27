@@ -1,110 +1,143 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/useAuth';
+import {
+  listUserFavorites,
+  removeFavorite,
+} from '../services/firestoreData';
 import './FavoritePets.css';
 
 export default function FavoritePets() {
-    const { currentUser } = useAuth();
-    const [favorites, setFavorites] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            try {
-                // This would normally fetch from your backend
-                // Simulated API call
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                setFavorites([
-                    {
-                        id: 1,
-                        name: 'Max',
-                        type: 'Dog',
-                        breed: 'Golden Retriever',
-                        age: '2 years',
-                        image: 'path_to_image',
-                        status: 'Available'
-                    },
-                    {
-                        id: 2,
-                        name: 'Luna',
-                        type: 'Cat',
-                        breed: 'Siamese',
-                        age: '1 year',
-                        image: 'path_to_image',
-                        status: 'Available'
-                    }
-                ]);
-                setLoading(false);
-            } catch (err) {
-                setError('Failed to fetch favorite pets');
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    let isMounted = true;
 
-        fetchFavorites();
-    }, [currentUser]);
+    async function hydrateFavorites() {
+      if (!currentUser) {
+        return;
+      }
 
-    const removeFavorite = async (petId) => {
-        try {
-            // This would normally update your backend
-            setFavorites(favorites.filter(pet => pet.id !== petId));
-        } catch (err) {
-            setError('Failed to remove pet from favorites');
+      try {
+        const favoriteData = await listUserFavorites(currentUser);
+
+        if (!isMounted) {
+          return;
         }
-    };
 
-    const applyForAdoption = (petId) => {
-        // Navigate to adoption form
-        window.location.href = `/adopt/apply/${petId}`;
-    };
+        setFavorites(favoriteData);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
 
-    if (loading) {
-        return <div className="favorites-loading">Loading favorite pets...</div>;
+        setFavorites([]);
+      }
+      setLoading(false);
     }
 
+    hydrateFavorites();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUser]);
+
+  const handleRemoveFavorite = async (petKey) => {
+    const nextFavorites = favorites.filter((pet) => pet.petKey !== petKey);
+    setFavorites(nextFavorites);
+
+    try {
+      await removeFavorite(currentUser, petKey);
+    } catch {
+      setFavorites(favorites);
+    }
+  };
+
+  if (loading) {
     return (
+      <main className="favorites-page">
         <div className="favorites-container">
-            <h2>Your Favorite Pets</h2>
-            {error && <div className="alert alert-danger">{error}</div>}
-            
-            <div className="favorites-grid">
-                {favorites.length === 0 ? (
-                    <div className="no-favorites">
-                        You haven't added any pets to your favorites yet.
-                    </div>
-                ) : (
-                    favorites.map(pet => (
-                        <div key={pet.id} className="pet-card">
-                            <div className="pet-image">
-                                {/* Replace with actual image */}
-                                <div className="placeholder-image">
-                                    {pet.type === 'Dog' ? '🐕' : '🐱'}
-                                </div>
-                            </div>
-                            <div className="pet-info">
-                                <h3>{pet.name}</h3>
-                                <p>{pet.breed}</p>
-                                <p>{pet.age}</p>
-                                <p className="status">{pet.status}</p>
-                            </div>
-                            <div className="pet-actions">
-                                <button
-                                    className="apply-button"
-                                    onClick={() => applyForAdoption(pet.id)}
-                                >
-                                    Apply to Adopt
-                                </button>
-                                <button
-                                    className="remove-button"
-                                    onClick={() => removeFavorite(pet.id)}
-                                >
-                                    Remove from Favorites
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
+          <p className="favorites-empty">Loading favorites...</p>
         </div>
+      </main>
     );
+  }
+
+  return (
+    <main className="favorites-page">
+      <div className="favorites-container">
+        <section className="favorites-header">
+          <div>
+            <p className="favorites-eyebrow">Saved pets</p>
+            <h1>Your favorites</h1>
+            <p>
+              Keep a short list of pets you want to compare before starting an
+              application.
+            </p>
+          </div>
+          <div className="favorites-summary">
+            <strong>{favorites.length}</strong>
+            <span>Saved right now</span>
+          </div>
+        </section>
+
+        {favorites.length === 0 ? (
+          <div className="favorites-empty">
+            <h2>No favorites yet</h2>
+            <p>
+              Save pets from the adoption board to keep them easy to compare and
+              revisit.
+            </p>
+            <Link to="/adopt" className="favorites-action favorites-action--primary">
+              Explore adoptable pets
+            </Link>
+          </div>
+        ) : (
+          <div className="favorites-grid">
+            {favorites.map((pet) => (
+              <article key={pet.petKey} className="favorite-card">
+                <div className="favorite-card__image-wrap">
+                  {pet.image ? (
+                    <img src={pet.image} alt={pet.name} className="favorite-card__image" />
+                  ) : (
+                    <div className="favorite-card__placeholder">{pet.animal}</div>
+                  )}
+                </div>
+
+                <div className="favorite-card__content">
+                  <h2>{pet.name}</h2>
+                  <p className="favorite-card__meta">
+                    {pet.animal} · {pet.gender} · {pet.age}
+                  </p>
+                  <p className="favorite-card__location">{pet.location}</p>
+                  <p className="favorite-card__details">{pet.details}</p>
+
+                  <div className="favorite-card__actions">
+                    <button
+                      type="button"
+                      className="favorites-action favorites-action--ghost"
+                      onClick={() => handleRemoveFavorite(pet.petKey)}
+                    >
+                      Remove
+                    </button>
+                    <button
+                      type="button"
+                      className="favorites-action favorites-action--primary"
+                      onClick={() => navigate(`/adopt/apply/${pet.petKey}`)}
+                    >
+                      Apply to adopt
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
+  );
 }

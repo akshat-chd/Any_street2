@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../contexts/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { getUserProfile, saveUserProfile } from '../services/firestoreData';
 import './ProfileSetup.css';
 
 export default function ProfileSetup() {
     const { currentUser } = useAuth();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
         phoneNumber: '',
         address: '',
         city: '',
@@ -20,6 +23,48 @@ export default function ProfileSetup() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function hydrateProfile() {
+            if (!currentUser) {
+                return;
+            }
+
+            try {
+                const savedProfile = await getUserProfile(currentUser);
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setFormData((previous) => ({
+                    ...previous,
+                    ...savedProfile,
+                    fullName:
+                        savedProfile.fullName || currentUser.displayName || previous.fullName,
+                    email: savedProfile.email || currentUser.email || previous.email,
+                }));
+            } catch {
+                if (!isMounted) {
+                    return;
+                }
+
+                setFormData((previous) => ({
+                    ...previous,
+                    fullName: currentUser.displayName || previous.fullName,
+                    email: currentUser.email || previous.email,
+                }));
+            }
+        }
+
+        hydrateProfile();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [currentUser]);
 
     const petTypes = ['Dogs', 'Cats', 'Birds', 'Small Animals'];
 
@@ -44,11 +89,15 @@ export default function ProfileSetup() {
         e.preventDefault();
         setLoading(true);
         try {
-            // Here you would save the profile data to your database
-            // For now, we'll just simulate it
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate('/dashboard');
-        } catch (err) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await saveUserProfile(currentUser, {
+                ...formData,
+                email: currentUser?.email || formData.email,
+            });
+            navigate('/dashboard', {
+                state: { message: 'Profile updated successfully.' }
+            });
+        } catch {
             setError('Failed to save profile information');
         }
         setLoading(false);
@@ -58,9 +107,32 @@ export default function ProfileSetup() {
         <div className="profile-setup-container">
             <div className="profile-setup-card">
                 <h2>Complete Your Profile</h2>
+                <p className="profile-setup-subtitle">
+                    Add the details shelters usually need before they review an application.
+                </p>
                 {error && <div className="alert alert-danger">{error}</div>}
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="profile-form-group">
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="profile-form-group">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            value={formData.email}
+                            disabled
+                        />
+                    </div>
+
+                    <div className="profile-form-group">
                         <label>Phone Number</label>
                         <input
                             type="tel"
@@ -71,7 +143,7 @@ export default function ProfileSetup() {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="profile-form-group">
                         <label>Address</label>
                         <input
                             type="text"
@@ -83,7 +155,7 @@ export default function ProfileSetup() {
                     </div>
 
                     <div className="address-grid">
-                        <div className="form-group">
+                        <div className="profile-form-group">
                             <label>City</label>
                             <input
                                 type="text"
@@ -93,7 +165,7 @@ export default function ProfileSetup() {
                                 required
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="profile-form-group">
                             <label>State</label>
                             <input
                                 type="text"
@@ -103,7 +175,7 @@ export default function ProfileSetup() {
                                 required
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="profile-form-group">
                             <label>ZIP Code</label>
                             <input
                                 type="text"
@@ -115,7 +187,7 @@ export default function ProfileSetup() {
                         </div>
                     </div>
 
-                    <div className="form-group">
+                    <div className="profile-form-group">
                         <label>Housing Type</label>
                         <select
                             name="housingType"
@@ -131,7 +203,7 @@ export default function ProfileSetup() {
                         </select>
                     </div>
 
-                    <div className="form-group checkbox-group">
+                    <div className="profile-form-group checkbox-group">
                         <label>
                             <input
                                 type="checkbox"
@@ -143,7 +215,7 @@ export default function ProfileSetup() {
                         </label>
                     </div>
 
-                    <div className="form-group">
+                    <div className="profile-form-group">
                         <label>Do you have any existing pets?</label>
                         <textarea
                             name="existingPets"
@@ -153,7 +225,7 @@ export default function ProfileSetup() {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="profile-form-group">
                         <label>Pet Care Experience</label>
                         <textarea
                             name="experience"
@@ -163,7 +235,7 @@ export default function ProfileSetup() {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className="profile-form-group">
                         <label>Interested in adopting (select all that apply):</label>
                         <div className="pet-types-grid">
                             {petTypes.map(type => (
@@ -179,7 +251,7 @@ export default function ProfileSetup() {
                         </div>
                     </div>
 
-                    <button disabled={loading} type="submit" className="submit-button">
+                    <button disabled={loading} type="submit" className="profile-submit-button">
                         {loading ? 'Saving...' : 'Complete Profile'}
                     </button>
                 </form>

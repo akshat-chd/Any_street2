@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
+import { saveUserProfile } from '../services/firestoreData';
 import './Register.css';
 
 export default function Register() {
@@ -23,8 +24,12 @@ export default function Register() {
         try {
             setError('');
             setLoading(true);
-            await signup(email, password);
-            // Additional user data could be saved to Firestore here
+            const credentials = await signup(email, password);
+            await saveUserProfile(credentials.user, {
+                fullName: name,
+                email,
+            });
+
             navigate('/profile-setup');
         } catch (error) {
             setError('Failed to create account: ' + error.message);
@@ -36,40 +41,47 @@ export default function Register() {
         <div className="register-container">
             <div className="register-card">
                 <h2>Create Account</h2>
+                <p className="register-subtitle">
+                    Set up your account first, then finish your adopter profile.
+                </p>
                 {error && <div className="alert alert-danger">{error}</div>}
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="register-form-group">
                         <label>Full Name</label>
                         <input
                             type="text"
+                            autoComplete="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="register-form-group">
                         <label>Email</label>
                         <input
                             type="email"
+                            autoComplete="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="register-form-group">
                         <label>Password</label>
                         <input
                             type="password"
+                            autoComplete="new-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             minLength={6}
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="register-form-group">
                         <label>Confirm Password</label>
                         <input
                             type="password"
+                            autoComplete="new-password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
@@ -80,6 +92,9 @@ export default function Register() {
                         Create Account
                     </button>
                 </form>
+                <p className="register-footer">
+                    Already have an account? <Link to="/login">Log in</Link>
+                </p>
             </div>
         </div>
     );

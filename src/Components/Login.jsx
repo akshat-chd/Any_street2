@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/useAuth';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Login.css';
 
 export default function Login() {
@@ -10,6 +10,8 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const { login, loginWithGoogle } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectPath = location.state?.from?.pathname || '/dashboard';
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -17,7 +19,7 @@ export default function Login() {
             setError('');
             setLoading(true);
             await login(email, password);
-            navigate('/dashboard');
+            navigate(redirectPath, { replace: true });
         } catch (error) {
             setError('Failed to sign in: ' + error.message);
         }
@@ -29,7 +31,7 @@ export default function Login() {
             setError('');
             setLoading(true);
             await loginWithGoogle();
-            navigate('/dashboard');
+            navigate(redirectPath, { replace: true });
         } catch (error) {
             setError('Failed to sign in with Google: ' + error.message);
         }
@@ -40,21 +42,26 @@ export default function Login() {
         <div className="login-container">
             <div className="login-card">
                 <h2>Login</h2>
+                <p className="login-subtitle">
+                    Sign in to manage favorites, applications, and your profile.
+                </p>
                 {error && <div className="alert alert-danger">{error}</div>}
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className="login-form-group">
                         <label>Email</label>
                         <input
                             type="email"
+                            autoComplete="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="login-form-group">
                         <label>Password</label>
                         <input
                             type="password"
+                            autoComplete="current-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -71,6 +78,9 @@ export default function Login() {
                 >
                     Sign in with Google
                 </button>
+                <p className="login-footer">
+                    New here? <Link to="/register">Create an account</Link>
+                </p>
             </div>
         </div>
     );

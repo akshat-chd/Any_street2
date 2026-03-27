@@ -1,38 +1,60 @@
 import './Sightings.css';
-import { useState } from "react";
+import { useEffect, useState } from 'react';
+import { useAuth } from '../contexts/useAuth';
+import { createSightingReport } from '../services/firestoreData';
 
 function Sightings() {
-  const [species, setSpecies] = useState("");
-  const [date, setDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [details, setDetails] = useState("");
+  const { currentUser } = useAuth();
+  const [species, setSpecies] = useState('');
+  const [date, setDate] = useState('');
+  const [location, setLocation] = useState('');
+  const [details, setDetails] = useState('');
   const [photo, setPhoto] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [previewUrl, setPreviewUrl] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Save sighting to localStorage
-    const newSighting = {
-      id: Date.now(),
-      animal: species,
-      date,
-      location,
-      details,
-      photo: photo ? URL.createObjectURL(photo) : null,
-      gender: '', // unknown
-      name: '', // unknown
-      age: '', // unknown
-      fromSighting: true
+  useEffect(() => {
+    if (!photo) {
+      setPreviewUrl('');
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(photo);
+    setPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
     };
-    const prev = JSON.parse(localStorage.getItem('sightings') || '[]');
-    localStorage.setItem('sightings', JSON.stringify([newSighting, ...prev]));
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    setSpecies("");
-    setDate("");
-    setLocation("");
-    setDetails("");
-    setPhoto(null);
+  }, [photo]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      setError('');
+      await createSightingReport({
+        species,
+        date,
+        location,
+        details,
+        photoFile: photo,
+        reporter: currentUser,
+      });
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+      setSpecies('');
+      setDate('');
+      setLocation('');
+      setDetails('');
+      setPhoto(null);
+    } catch (submitError) {
+      setError(submitError.message || 'Failed to submit sighting.');
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -47,6 +69,9 @@ function Sightings() {
         {submitted && (
           <div className="alert alert-success text-center">Thank you! Your sighting has been submitted.</div>
         )}
+        {error ? (
+          <div className="alert alert-danger text-center">{error}</div>
+        ) : null}
         <div className="row g-4">
           <div className="col-md-6">
             <label className="form-label">Species <span style={{color:'#e07a5f'}}>*</span></label>
@@ -101,7 +126,7 @@ function Sightings() {
             {photo && (
               <div className="mt-2 text-center">
                 <img
-                  src={URL.createObjectURL(photo)}
+                  src={previewUrl}
                   alt="Preview"
                   style={{ maxWidth: '180px', maxHeight: '180px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
                 />
@@ -110,8 +135,8 @@ function Sightings() {
           </div>
         </div>
         <div className="text-center mt-4">
-          <button type="submit" className="btn btn-primary px-5">
-            Submit Sighting
+          <button type="submit" className="btn btn-primary px-5" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit Sighting'}
           </button>
         </div>
       </form>
