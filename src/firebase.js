@@ -4,21 +4,21 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyAPmS-_GVssJvO8pHqqFMiX8P5JpoOv6Hw',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyA8eeG1Fxg6olIhnJc9ox8k1W-vuDpA5k8',
   authDomain:
     import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
-    'anystreet-38d0c.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'anystreet-38d0c',
+    'anystreet-bf010.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'anystreet-bf010',
   storageBucket:
     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
-    'anystreet-38d0c.appspot.com',
+    'anystreet-bf010.firebasestorage.app',
   messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '465967007235',
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '567260150764',
   appId:
     import.meta.env.VITE_FIREBASE_APP_ID ||
-    '1:465967007235:web:a4e663d97708674a6eb036',
+    '1:567260150764:web:158d9799a3884b55f6dec9',
   measurementId:
-    import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-1HR5R8NYG7',
+    import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-5YEJ4CL36Y',
 };
 
 const app = initializeApp(firebaseConfig);

@@ -5,7 +5,8 @@ service firebase.storage {
     match /sightings/{allPaths=**} {
       allow read: if true;
       allow write: if request.resource.size < 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
+        && request.resource.contentType.matches('image/.*')
+        && allPaths.matches('^[A-Za-z0-9._/-]+$');
     }
   }
 }

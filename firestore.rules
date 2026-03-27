@@ -10,6 +10,10 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function hasOnlyKeys(allowedKeys) {
+      return request.resource.data.keys().hasOnly(allowedKeys);
+    }
+
     match /users/{userId}/profile/{profileId} {
       allow read, write: if isOwner(userId);
     }
@@ -19,7 +23,8 @@ service cloud.firestore {
     }
 
     match /users/{userId}/applications/{applicationId} {
-      allow read, write: if isOwner(userId);
+      allow read, write: if isOwner(userId)
+        && request.resource.data.applicantEmail == request.auth.token.email;
     }
 
     match /users/{userId}/notifications/{notificationId} {
@@ -28,8 +33,27 @@ service cloud.firestore {
 
     match /sightings/{sightingId} {
       allow read: if true;
-      allow create: if true;
-      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.reporterId;
+      allow create: if hasOnlyKeys([
+          'age',
+          'animal',
+          'breed',
+          'createdAt',
+          'date',
+          'details',
+          'fromSighting',
+          'gender',
+          'location',
+          'name',
+          'photo',
+          'reporterEmail',
+          'reporterId',
+          'source',
+          'status',
+          'updatedAt'
+        ]);
+      allow update, delete: if isSignedIn()
+        && request.auth.uid == resource.data.reporterId
+        && request.resource.data.reporterId == resource.data.reporterId;
     }
   }
 }

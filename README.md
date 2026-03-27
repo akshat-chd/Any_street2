@@ -51,16 +51,34 @@ Required backend env vars:
 
 This repo now includes:
 
+- `.firebaserc`
 - `firebase.json`
 - `firestore.rules`
 - `firestore.indexes.json`
 - `storage.rules`
 
-You still need to:
+This repo is configured for Firebase project `anystreet-bf010`.
 
-1. Enable Firestore in the Firebase console for project `anystreet-38d0c`.
+Local Firebase deployment workflow:
+
+```bash
+npm install
+npm run firebase:login
+npm run firebase:deploy:rules
+npm run firebase:deploy:hosting
+```
+
+You still need to make sure:
+
+1. Enable Firestore in the Firebase console for project `anystreet-bf010`.
 2. Enable Firebase Storage.
-3. Deploy the Firestore and Storage rules.
+3. If Hosting is not enabled yet, enable Firebase Hosting once in the console or via the CLI prompt.
+
+What gets deployed:
+
+- Firestore rules and indexes
+- Storage rules
+- the Vite production build from `dist/`
 
 ## Features added
 
